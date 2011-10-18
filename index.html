@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Presentation</title>
+
+    <meta charset='utf-8'>
+    <style type="text/css">
+    
+    article {
+      padding-top: 40px;
+    }
+    h3 {
+      padding-top: 30px;
+    }
+    </style>
+    <script src="slides.js"></script>
+    <script src="jquery-1.6.4.min.js"></script>
+    <script type="text/javascript">
+    </script>
+  </head>
+    <body style='display: none'>
+
+    <section class='slides layout-regular template-default'>
+      <article>
+        <h1>Puppet &amp; Mozilla</h1>
+        <p>
+        <img src='images/Puppet-Labs-Logo-Horizontal-Sm.png' />
+        <img src='images/logo-wordmark-mozilla-small.png' />
+        </p>
+        <p align="right">
+        <br/>
+        Chris AtLee &lt;catlee@mozilla.com&gt;<br/>
+        Oct 19, 2011<br/>
+        </p>
+        <div style="position: absolute; top:645px; font-weight:
+          300">Follow along at <a
+            href="http://catlee.github.com/puppet-talk">mzl.la/mozpup</a></div>
+      </article>
+      <article>
+        <h3>Who am I?</h3>
+            Chris AtLee &lt;catlee@mozilla.com&gt;<br/>
+            Release Engineering Manager at Mozilla.
+            I work with John O'Duinn who spoke to some of you earlier
+            about our release process.
+            We like to share what we've learned about release
+            engineering, and this is part of that. We'd love to hear
+            what things you've learned too!
+            My group is responsible for all the continuous build
+            integration infrastructure for Firefox development as well
+            as all of the release infrastructure. We have over a
+            thousand machines, and are doing nearly 2,000 builds of
+            Firefox a day, with almost 20,000 test jobs a day.
+      </article>
+      <article>
+        <h3>What is puppet?</h3>
+        <div class="build">
+        <span>
+        puppet is an open-source configuration management system that
+        allows you to manage:
+        <ul>
+            <li>installed software</li>
+            <li>running services</li>
+            <li>user accounts</li>
+            <li>cron jobs</li>
+            <li>&amp; anything else that can be scripted</li>
+        </ul>
+        </span>
+        
+        <p>It uses a simple declarative language to describe the desired
+        state of your systems.</p>
+
+        <p>It runs well on Linux and OSX.</p>
+        </div>
+      </article>
+      <article>
+        <h3>Why should I use it?</h3>
+        <div class="build">
+            <p>Do you enjoy deploying new cron jobs to dozens of
+            machines via ssh? (mozilla releng has done this)</p>
+            <p>Do you like rebuilding production machines from
+            outdated documentation on a wiki somewhere? (this too)</p>
+            <p>No?</p>
+            <p>puppet allows you to manage all of your systems
+            from a central location.</p>
+            <p>you control when updates are deployed.</p>
+            <p>guaranteed consistency.</p>
+            <p>un-doing of local changes (it's not a bug...it's a
+            feature!)</p>
+            <p>reproducibility - your manifests become the de-facto
+            recipe for how to (re-)create the environment.</p>
+            </div>
+        </div>
+      </article>
+      <article>
+        <h3>How does Mozilla use it?</h3>
+        Release Engineering manages over a thousand machines for our
+        continuous build &amp; release infrastructure on mix
+        of Linux, OSX, Windows. It's impossible to manage this many
+        machines manually. We were failing horribly with just a
+        fraction of our current capacity. Human error, copy/paste fail.
+
+        Other groups inside Mozilla such as IT also use puppet.
+      </article>
+      <article>
+        <h3>Quick example</h3>
+        <pre>
+class apache {
+    package {
+        "apache":
+            ensure =&gt; latest;
+    }
+
+    service {
+        "apache":
+            require =&gt; Package['apache'],
+            enable =&gt; true,
+            ensure =&gt; running;
+    }
+}
+
+node "webserver.domain.org" {
+    include apache
+}</pre>
+        <div class="build">
+        <div style="top: 120px; left: 250px; position: absolute">
+            &larr; classes encapsulate a set of resources
+        </div>
+        <div style="top: 150px; left: 290px; position: absolute; padding-right: 100px;">
+            &larr; packages specify which native packages (e.g. deb, rpm) to install
+        </div>
+        <div style="top: 290px; left: 290px; position: absolute; padding-right: 100px;">
+            &larr; which services (/etc/init.d) should be run
+        </div>
+        <div style="top: 510px; left: 400px; position: absolute; padding-right: 100px;">
+            &larr; nodes specify individual hosts in your network, and how they should be configured
+        </div>
+        </div>
+      </article>
+      <article>
+        <h3>Declarative language</h3>
+        <p>puppet manifests describe the expected state of the system,
+        <em>not</em> (generally) how to get there. Contrast this with
+        imperative systems where configuration is deployed as a series
+        of changes. With imperative systems, How do you know what your
+        last state of your machine was? How do you cope with machines
+        that are in various states of "up-to-date"-ness? A lot of that
+        problem is pushed down to the administrator to develop smarter
+        deployment scripts to test the state of the machine. It's
+        often very different deploying a change onto a freshly imaged
+        system than an old crufty system that has been running for
+        months or years.</p>
+        <p>One of the nice things about puppet is that its language is
+        declarative: you describe the end state of the system, and
+        puppet figures out what needs to happen to get you there.</p>
+      </article>
+      <article>
+        <h3>Resources</h3>
+        At the lowest level, puppet manages a set of "resources" for
+        each system. The node definition and any included classes or
+        defines describe what resources are available on a system.
+        <pre>
+package {
+  "apache":
+    ensure =&gt; latest;
+}
+
+service {
+    "apache":
+        require =&gt; Package['apache'],
+        enable =&gt; true,
+        ensure =&gt; running;
+}</pre>
+        This manifest ensures that the "apache" package is installed,
+        and that the "apache" service is enabled (starts on boot), and
+        is running. The service depends on the package.
+        start the server without the bina
+      </article>
+      <article>
+      <h3>Classes &amp; defines</h3>
+        classes and defines are ways of grouping sets of related
+        resources together so they can be reused on other systems.
+      </article>
+      <article>
+        - global names for things (can't have two exec "foo" in
+        two different classes)
+        - classes vs definitions
+        - meta parameters
+        - compiling manifests per machine
+        - modules
+        - puppet apply
+        - environments
+      </article>
+      <article>
+        <h3>Tips &amp; Tricks</h3>
+      </article>
+      <article>
+        <h3>Pitfalls &amp; warts</h3>
+        - variable scope
+        - ensure => latest
+        - inter-package dependencies
+      </article>
+      <article>
+        <h3>Links and Resources</h3>
+        <ul>
+            <li>This talk can be found at <a
+                href="http://www.github.com/catlee/html5slides/puppet">github.com/catlee/html5slides/puppet</a></li>
+            <li>Mozilla Release Engineering's puppet manifests are at
+            <a
+                href="http://hg.mozilla.org/build/puppet-manifests">hg.mozilla.org/build/puppet-manifests</a></li>
+            <li>Puppet docs: <a
+                href="http://docs.puppetlabs.com/references/2.6.11/type.html">docs.puppetlabs.com/references/2.6.11/type.html</a></li>
+        </ul>
+      </article>
+  </body>
+</html>
+    
