@@ -14,9 +14,6 @@
     }
     </style>
     <script src="slides.js"></script>
-    <script src="jquery-1.6.4.min.js"></script>
-    <script type="text/javascript">
-    </script>
   </head>
     <body style='display: none'>
 
@@ -178,7 +175,18 @@ node "webserver.domain.org" {
         At the lowest level, puppet manages a set of "resources" for
         each system. The node definition and any included classes or
         defines describe what resources are available on a system.
-        <iframe src="demo1.pp" style="height:200px"></iframe>
+        <pre>
+package {
+    "apache2":
+        ensure =&gt; latest;
+}
+
+service {
+    "apache2":
+        require =&gt;> Package["apache2"],
+        enable =&gt;> true,
+        ensure =&gt;> running;
+}</pre>
         This manifest ensures that the "apache2" package is installed,
         and that the "apache2" service is enabled (starts on boot), and
         is running. The service depends on the package, since you
@@ -188,7 +196,7 @@ node "webserver.domain.org" {
       <h3>Dependencies</h3>
       require, before, after, notify, subscribe
       </article>
-      <article>
+      <article class="smaller">
       <h3>Classes</h3>
         <p>
         classes and defines are ways of grouping sets of related
@@ -202,15 +210,36 @@ node "webserver.domain.org" {
         classes are singletons - there can only be one instance of a
         class on a given node.
         </p>
-        <iframe src="demo2.pp" type="text/plain" style="height:300px"></iframe>
+        <iframe src="demo2.html" style="height:400px"></iframe>
       </article>
-      <article>
+      <article class="smaller">
       <h3>Resource definitions</h3>
       <p>If you need more than one instance of a thing on a node, you
       should use custom resource definitions. These custom resource
       types then become usable just like native types such as
       "package", "exec", and "service".
-      <iframe src="demo3.pp" type="text/plain" style="height:400px"></iframe>
+      <pre class="smaller">
+define git::repo($remote_repo) {
+    include git
+    exec {
+        "${name}-clone":
+            require =&gt; Class['git'],
+            command =&gt; "/usr/bin/git clone $remote_repo $name",
+            creates =&gt; $name;
+    }
+}
+class git {
+    package {
+        "git-core":
+            ensure =&gt; latest;
+    }
+}
+# Now we can use this resource type like any other native type
+# Clone the puppet-talk repo to /root/puppet-talk
+git::repo {
+    "/root/puppet-talk": 
+        remote_repo =&gt; "git://github.com/catlee/puppet-talk.git";
+}</pre>
       </article>
       <article>
         - global names for things (can't have two exec "foo" in
