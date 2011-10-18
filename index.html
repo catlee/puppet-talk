@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Presentation</title>
+    <title>Puppet &amp; Mozilla</title>
 
     <meta charset='utf-8'>
     <style type="text/css">
@@ -22,7 +22,7 @@
 
     <section class='slides layout-regular template-default'>
       <article>
-        <h1>Puppet &amp; Mozilla</h1>
+      <h1>Puppet &amp;<span align="right">Mozilla</span></h1>
         <p>
         <img src='images/Puppet-Labs-Logo-Horizontal-Sm.png' />
         <img src='images/logo-wordmark-mozilla-small.png' />
@@ -34,22 +34,24 @@
         </p>
         <div style="position: absolute; top:645px; font-weight:
           300">Follow along at <a
-            href="http://catlee.github.com/puppet-talk">mzl.la/mozpup</a></div>
+            href="http://bit.ly/qLothj">bit.ly/qLothj</a></div>
       </article>
       <article>
         <h3>Who am I?</h3>
             Chris AtLee &lt;catlee@mozilla.com&gt;<br/>
-            Release Engineering Manager at Mozilla.
-            I work with John O'Duinn who spoke to some of you earlier
-            about our release process.
-            We like to share what we've learned about release
-            engineering, and this is part of that. We'd love to hear
-            what things you've learned too!
-            My group is responsible for all the continuous build
+            Release Engineering Manager at Mozilla.<br/>
+
+            <p>My group is responsible for all the continuous build
             integration infrastructure for Firefox development as well
-            as all of the release infrastructure. We have over a
+            as the release infrastructure. We have over a
             thousand machines, and are doing nearly 2,000 builds of
-            Firefox a day, with almost 20,000 test jobs a day.
+            Firefox a day, with almost 20,000 test jobs a day.</p>
+
+            <p>I work with John O'Duinn who spoke to some of you
+            earlier about our release process.  We like to share what
+            we've learned about release engineering, and this is part
+            of that. We'd love to hear what things you've learned
+            too!</p>
       </article>
       <article>
         <h3>What is puppet?</h3>
@@ -78,8 +80,9 @@
             <p>Do you enjoy deploying new cron jobs to dozens of
             machines via ssh? (mozilla releng has done this)</p>
             <p>Do you like rebuilding production machines from
-            outdated documentation on a wiki somewhere? (this too)</p>
-            <p>No?</p>
+            outdated documentation on a wiki somewhere? (we've done
+            this too)</p>
+            <h4>No?</h4>
             <p>puppet allows you to manage all of your systems
             from a central location.</p>
             <p>you control when updates are deployed.</p>
@@ -93,26 +96,41 @@
       </article>
       <article>
         <h3>How does Mozilla use it?</h3>
+        <p>
         Release Engineering manages over a thousand machines for our
         continuous build &amp; release infrastructure on mix
-        of Linux, OSX, Windows. It's impossible to manage this many
+        of Linux, OSX, Windows. It's simply impossible to manage this many
         machines manually. We were failing horribly with just a
-        fraction of our current capacity. Human error, copy/paste fail.
+        fraction of our current capacity due to:
+        </p>
+        <ul>
+          <li>Human error</li>
+          <li>copy/paste fail</li>
+          <li>machines being offline when maintenance being
+          performed</li>
+        </ul>
 
+        <p>
         Other groups inside Mozilla such as IT also use puppet.
+        </p>
+      </article>
+      <article class="nobackground">
+      <h3>Manual pain</h3>
+      <iframe
+        src="https://wiki.mozilla.org/ReferencePlatforms/Linux-CentOS-5.0#Version_2"></iframe>
       </article>
       <article>
         <h3>Quick example</h3>
         <pre>
 class apache {
     package {
-        "apache":
+        "apache2":
             ensure =&gt; latest;
     }
 
     service {
-        "apache":
-            require =&gt; Package['apache'],
+        "apache2":
+            require =&gt; Package['apache2'],
             enable =&gt; true,
             ensure =&gt; running;
     }
@@ -139,9 +157,11 @@ node "webserver.domain.org" {
       <article>
         <h3>Declarative language</h3>
         <p>puppet manifests describe the expected state of the system,
-        <em>not</em> (generally) how to get there. Contrast this with
+        <strong>not</strong> how to get there. Contrast this with
         imperative systems where configuration is deployed as a series
-        of changes. With imperative systems, How do you know what your
+        of changes.</p>
+        <p>
+        With imperative systems, How do you know what your
         last state of your machine was? How do you cope with machines
         that are in various states of "up-to-date"-ness? A lot of that
         problem is pushed down to the administrator to develop smarter
@@ -158,40 +178,54 @@ node "webserver.domain.org" {
         At the lowest level, puppet manages a set of "resources" for
         each system. The node definition and any included classes or
         defines describe what resources are available on a system.
-        <pre>
-package {
-  "apache":
-    ensure =&gt; latest;
-}
-
-service {
-    "apache":
-        require =&gt; Package['apache'],
-        enable =&gt; true,
-        ensure =&gt; running;
-}</pre>
-        This manifest ensures that the "apache" package is installed,
-        and that the "apache" service is enabled (starts on boot), and
-        is running. The service depends on the package.
-        start the server without the bina
+        <iframe src="demo1.pp" style="height:200px"></iframe>
+        This manifest ensures that the "apache2" package is installed,
+        and that the "apache2" service is enabled (starts on boot), and
+        is running. The service depends on the package, since you
+        can't start running apache without first installing it!
       </article>
       <article>
-      <h3>Classes &amp; defines</h3>
+      <h3>Dependencies</h3>
+      require, before, after, notify, subscribe
+      </article>
+      <article>
+      <h3>Classes</h3>
+        <p>
         classes and defines are ways of grouping sets of related
         resources together so they can be reused on other systems.
+        </p>
+        <p>
+        Don't think object-oriented-programming classes. Think "roles"
+        instead.
+        </p>
+        <p>
+        classes are singletons - there can only be one instance of a
+        class on a given node.
+        </p>
+        <iframe src="demo2.pp" type="text/plain" style="height:300px"></iframe>
+      </article>
+      <article>
+      <h3>Resource definitions</h3>
+      <p>If you need more than one instance of a thing on a node, you
+      should use custom resource definitions. These custom resource
+      types then become usable just like native types such as
+      "package", "exec", and "service".
+      <iframe src="demo3.pp" type="text/plain" style="height:400px"></iframe>
       </article>
       <article>
         - global names for things (can't have two exec "foo" in
         two different classes)
         - classes vs definitions
-        - meta parameters
         - compiling manifests per machine
         - modules
         - puppet apply
         - environments
+        - templates
       </article>
       <article>
         <h3>Tips &amp; Tricks</h3>
+        - puppet apply
+        - 
       </article>
       <article>
         <h3>Pitfalls &amp; warts</h3>
@@ -200,10 +234,13 @@ service {
         - inter-package dependencies
       </article>
       <article>
+        <h1 align="center">Q &amp; A</h1>
+      </article>
+      <article>
         <h3>Links and Resources</h3>
         <ul>
             <li>This talk can be found at <a
-                href="http://www.github.com/catlee/html5slides/puppet">github.com/catlee/html5slides/puppet</a></li>
+                href="https://github.com/catlee/puppet-talk">github.com/catlee/puppet-talk</a></li>
             <li>Mozilla Release Engineering's puppet manifests are at
             <a
                 href="http://hg.mozilla.org/build/puppet-manifests">hg.mozilla.org/build/puppet-manifests</a></li>
