@@ -1,4 +1,4 @@
-# demo2.pp
+# demo4.pp
 class ntp {
     package {
         "ntp":
