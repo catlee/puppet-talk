@@ -204,7 +204,6 @@ package {
     "apache2":
         ensure =&gt; latest;
 }
-
 service {
     "apache2":
         require =&gt; Package["apache2"],
@@ -404,6 +403,8 @@ restrict ::1
             <li>facter</li>
             <li>variables</li>
             <li>conditionals and "flow control"</li>
+            <li>mcollective</li>
+            <li>web management</li>
         </ul>
       </article>
       <article>
@@ -430,7 +431,7 @@ restrict ::1
             <li>Mozilla Release Engineering's puppet manifests are at
             <a
                 href="http://hg.mozilla.org/build/puppet-manifests">hg.mozilla.org/build/puppet-manifests</a></li>
-            <li>Learn more! http://docs.puppetlabs.com/learning </li>
+            <li>Learn more! <a href="http://docs.puppetlabs.com/learning">docs.puppetlabs.com/learning</a></li>
             <li>Puppet docs: <a
                 href="http://docs.puppetlabs.com">docs.puppetlabs.com</a></li>
             <li>Puppet resource type docs: <a

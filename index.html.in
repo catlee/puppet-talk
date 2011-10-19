@@ -287,7 +287,7 @@
             <li>Mozilla Release Engineering's puppet manifests are at
             <a
                 href="http://hg.mozilla.org/build/puppet-manifests">hg.mozilla.org/build/puppet-manifests</a></li>
-            <li>Learn more! http://docs.puppetlabs.com/learning </li>
+            <li>Learn more! <a href="http://docs.puppetlabs.com/learning">docs.puppetlabs.com/learning</a></li>
             <li>Puppet docs: <a
                 href="http://docs.puppetlabs.com">docs.puppetlabs.com</a></li>
             <li>Puppet resource type docs: <a
