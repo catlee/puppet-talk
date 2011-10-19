@@ -1,3 +1,22 @@
+class ntp {
+    package {
+        "ntp":
+            ensure => latest;
+    }
+    service {
+        "ntp":
+            require => Package['ntp'],
+            enable => true,
+            ensure => running;
+    }
+    file {
+        "/etc/ntp.conf":
+            source => "/vagrant/ntp.conf",
+            mode => 644,
+            notify => Service["ntp"];
+    }
+}
+
 class apache {
     package {
         "apache2":
@@ -12,26 +31,7 @@ class apache {
     }
 }
 
-class ntp {
-    package {
-        "ntp":
-            ensure => latest;
-    }
-    service {
-        "ntp":
-            require => Package['ntp'],
-            enable => true,
-            ensure => running;
-    }
-    #file {
-        #"/etc/ntp.conf":
-            #source => "/vagrant/ntp.conf",
-            #mode => 644,
-            #notify => Service["ntp"];
-    #}
-}
-
 node "lucid32" {
     include apache
-    #include ntp
+    include ntp
 }

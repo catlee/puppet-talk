@@ -1,5 +1,7 @@
-## 5 things
+## Brief talk on puppet & how it's used at Mozilla
 
-HTML5-based slide deck software based on Google's 'HTML5 slides':
+[http://github.com/catlee/puppet-talk](http://github.com/catlee/puppet-talk)
 
-[http://code.google.com/p/html5slides/](http://code.google.com/p/html5slides/)
+## Extra files:
+* Vagrantfile for getting a simple VM up and running to test out...
+* demo?.pp simple demonstration manifests

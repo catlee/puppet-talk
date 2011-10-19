@@ -139,24 +139,7 @@
       </article>
       <article>
         <h3>Enough talking! Show me some code!</h3>
-        <pre>class apache {
-    package {
-        "apache2":
-            ensure =&gt; latest;
-    }
-
-    service {
-        "apache2":
-            require =&gt; Package['apache2'],
-            enable =&gt; true,
-            ensure =&gt; running;
-    }
-}
-
-node "webserver.domain.org" {
-    include apache
-}
-</pre>
+        <pre>{{example.pp}}</pre>
         <div class="build">
         <div style="top: 120px; left: 250px; position: absolute">
             &larr; classes encapsulate a set of resources
@@ -197,18 +180,7 @@ node "webserver.domain.org" {
         At the lowest level, puppet manages a set of "resources" for
         each system. The node definition and any included classes or
         defines describe what resources are available on a system.
-        <pre>package {
-    "apache2":
-        ensure =&gt; latest;
-}
-
-service {
-    "apache2":
-        require =&gt; Package["apache2"],
-        enable =&gt; true,
-        ensure =&gt; running;
-}
-</pre>
+        <pre>{{demo1.pp}}</pre>
         This manifest ensures that the "apache2" package is installed,
         and that the "apache2" service is enabled (starts on boot), and
         is running. The service depends on the package, since you
@@ -243,44 +215,7 @@ service {
         given node. Nodes "include" them to declare that all of the resources
         defined in the classes should be applied to the node.
         </p>
-        <pre style="height:300px; overflow:scroll;">class ntp {
-    package {
-        "ntp":
-            ensure =&gt; latest;
-    }
-    service {
-        "ntp":
-            require =&gt; Package['ntp'],
-            enable =&gt; true,
-            ensure =&gt; running;
-    }
-    file {
-        "/etc/ntp.conf":
-            source =&gt; "/vagrant/ntp.conf",
-            mode =&gt; 644,
-            notify =&gt; Service["ntp"];
-    }
-}
-
-class apache {
-    package {
-        "apache2":
-            ensure =&gt; latest;
-    }
-
-    service {
-        "apache2":
-            require =&gt; Package["apache2"],
-            enable =&gt; true,
-            ensure =&gt; running;
-    }
-}
-
-node "lucid32" {
-    include apache
-    include ntp
-}
-</pre>
+        <pre style="height:300px; overflow:scroll;">{{demo2.pp}}</pre>
       </article>
       <article class="smaller">
       <h3>Resource definitions</h3>
@@ -288,40 +223,7 @@ node "lucid32" {
       should use custom resource definitions. These custom resource
       types then become usable just like native types such as
       "package", "exec", and "service".
-      <pre style="height:400px; overflow:scroll;"># Basic class to get the require packages we need installed
-class git {
-    package {
-        "git-core":
-            ensure =&gt; latest;
-    }
-}
-
-# Use define to create a new resource type
-define git::repo($remote_repo) {
-    # We need the git packages
-    include git
-
-    exec { 
-        # $name is a special variable that refers to the name given to this
-        # resource where it's instantiated
-        $name:
-            require =&gt; Class['git'], # Can't run this without git itself!
-            command =&gt; "/usr/bin/git clone $remote_repo $name",
-            creates =&gt; $name;
-    }
-}
-
-# Now we can use this resource type like any other native type
-# Clone the puppet-talk repo to /root/puppet-talk
-node "lucid32" {
-    git::repo {
-        "/root/puppet-talk":  # this is $name
-            remote_repo =&gt; "git://github.com/catlee/puppet-talk.git";
-        "/root/buildbot":     # so is this
-            remote_repo =&gt; "git://github.com/catlee/buildbot.git";
-    }
-}
-</pre>
+      <pre style="height:400px; overflow:scroll;">{{demo3.pp}}</pre>
       </article>
       <article>
         - global names for things (can't have two exec "foo" in
@@ -354,9 +256,10 @@ node "lucid32" {
             <li>Mozilla Release Engineering's puppet manifests are at
             <a
                 href="http://hg.mozilla.org/build/puppet-manifests">hg.mozilla.org/build/puppet-manifests</a></li>
+            <li>Learn more! http://docs.puppetlabs.com/learning </li>
             <li>Puppet docs: <a
                 href="http://docs.puppetlabs.com">docs.puppetlabs.com</a></li>
-            <li>Puppet type docs: <a
+            <li>Puppet resource type docs: <a
                 href="http://docs.puppetlabs.com/references/2.6.11/type.html">docs.puppetlabs.com/references/2.6.11/type.html</a></li>
         </ul>
       </article>
