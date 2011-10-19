@@ -1,3 +1,4 @@
+# demo3.pp
 # Basic class to get the require packages we need installed
 class git {
     package {

@@ -19,12 +19,12 @@
 
     <section class='slides layout-regular template-default'>
       <article>
-      <h1>Puppet &amp;<span align="right">Mozilla</span></h1>
-        <p>
-        <img src='images/Puppet-Labs-Logo-Horizontal-Sm.png' />
-        <img src='images/logo-wordmark-mozilla-small.png' />
-        </p>
-        <p align="right">
+        <div align="center">
+            <img src='images/mozilla.png' /> <br/>
+            <h4>and</h4>
+            <img src='images/Puppet-Labs-Logo-Horizontal-Sm.png' />
+        </div>
+        <p align="right" style="padding-top:100px">
         <br/>
         Chris AtLee &lt;catlee@mozilla.com&gt;<br/>
         Oct 19, 2011<br/>
@@ -97,44 +97,45 @@
         <h3>How does Mozilla use it?</h3>
         <p>
         Release Engineering manages over a thousand machines for our
-        continuous build &amp; release infrastructure on mix
+        continuous build &amp; release infrastructure on a mix
         of Linux, OSX, Windows. It's simply impossible to manage this many
-        machines manually. We were failing horribly with just a
+        machines manually. We were failing horribly when we had just a
         fraction of our current capacity due to:
         </p>
         <ul>
           <li>Human error</li>
-          <li>copy/paste fail</li>
-          <li>machines being offline when maintenance being performed</li>
+          <li>Copy/paste fail</li>
+          <li>Machines being offline when maintenance being performed</li>
         </ul>
-
         <p>
         Other groups inside Mozilla such as IT also use puppet.
         </p>
       </article>
-      <article class="nobackground">
+      <article>
       <h3>Manual pain</h3>
+      Our old reference documentation for how to reproduce a linux build machine.
       <iframe
-        src="https://wiki.mozilla.org/ReferencePlatforms/Linux-CentOS-5.0#Version_2"></iframe>
+        src="https://wiki.mozilla.org/ReferencePlatforms/Linux-CentOS-5.0#Version_2" style="height:400px"></iframe>
       </article>
       <article class="small">
       <h3>Today in RelEng</h3>
+      We now use puppet to
       <ul class="build">
-      <li>puppet manages our linux and OSX build and test slaves (hundreds of these).
-        <ul>
-        <li>Deploy new compilers</li>
-        <li>Ensure system services like screensavers are disabled</li>
-        <li>We run puppet once on boot and wait for it to complete before starting the buildbot slave</li>
-        </ul>
-      </li>
-      <li><p>buildbot masters (dozens of these)</p>
-      <p>These used to be set up manually. Only a handful of them, so what's the big deal?</p>
-      <ul class="build">
-      <li>No naming consistency. Depending on who set it up a master could be in <code>/builds/buildbot/build_master</code>, <code>/builds/buildbot/build_master1</code> or <code>/builds/buildbot/build-master</code></li>
-      <li>Missing cronjobs, init.d entries, nagios checks. It can take a while to discover these problems!</li>
-      </ul>
-      </li>
-      <li>almost every new client or server deployment is done now with puppet</li>
+        <li>manage our linux and OSX build and test slaves (hundreds of these).
+            <ul>
+                <li>Deploy new compilers</li>
+                <li>Ensure system services like screensavers are disabled</li>
+                <li>We run puppet once on boot and wait for it to complete before starting the buildbot slave</li>
+            </ul>
+        </li>
+        <li><p>manage buildbot masters (dozens of these)</p>
+            <p>These used to be set up manually. Only a handful of them, so what's the big deal?</p>
+            <ul class="build">
+                <li>No naming consistency. Depending on who set it up a master could be in <code>/builds/buildbot/build_master</code>, <code>/builds/buildbot/build_master1</code> or <code>/builds/buildbot/build-master</code></li>
+                <li>Missing cronjobs, init.d entries, nagios checks. It can take a while to discover these problems!</li>
+            </ul>
+        </li>
+        <li>almost every new client or server deployment is done now with puppet</li>
       </ul>
       </article>
       <article>
@@ -164,7 +165,8 @@
         <p>
         With imperative systems, How do you know what your
         last state of your machine was? How do you cope with machines
-        that are in various states of "up-to-date"-ness? A lot of that
+        that are in various states of "up-to-date"-ness?</p>
+        <p>A lot of that
         problem is pushed down to the administrator to develop smarter
         deployment scripts to test the state of the machine. It's
         often very different deploying a change onto a freshly imaged
@@ -193,18 +195,23 @@
       different resources.
       </p>
       <dl>
-      <dt>require</dt><dd>we've seen this before - the required resource must be satisfied before this one is checked</dd>
-      <dt>before</dt><dd>opposite of require - this resource must be satisfied first</dd>
-      <dt>subscribe</dt><dd>like require, but refreshes if the dependency changes. Useful for services.</dd>
+      <dt>require</dt><dd>we've seen this before - the required resource must
+        be satisfied before this one is checked</dd>
+      <dt>before</dt><dd>opposite of require - this resource must be satisfied
+        first</dd>
+      <dt>subscribe</dt><dd>like require, but refreshes if the dependency
+        changes. Useful for services.</dd>
       <dt>notify</dt><dd>opposite of subscribe</dd>
       </dl>
-      <p>Note the different syntax for referring to an already declared resource (<code>Package['apache2']</code>) vs declaring a resource (<code>package {"apache2": ...}</code>)</p>
+      <p>Note the different syntax for referring to an already declared
+      resource: <code>Package['apache2']</code> vs declaring a resource:
+      <code>package {"apache2": ...}</code></p>
       </article>
       <article class="smaller">
       <h3>Classes</h3>
         <p>
         classes are a way of grouping sets of related
-        resources together so they can be reused on other systems.
+        resources together so they can be reused elsewhere.
         </p>
         <p>
         Don't think object-oriented-programming classes. Think "roles"
@@ -225,25 +232,49 @@
       "package", "exec", and "service".
       <pre style="height:400px; overflow:scroll;">{{demo3.pp}}</pre>
       </article>
-      <article>
-        - global names for things (can't have two exec "foo" in
-        two different classes)
-        - compiling manifests per machine
-        - modules
-        - puppet apply
-        - environments
-        - templates
+      <article class="smaller">
+        <h3>Templates</h3>
+        puppet supports the ERB template language (also used by ruby on rails) to support content generated at runtime. A simple example of this is with the file resource:
+        <pre style="height:400px; overflow:scroll;">{{demo4.pp}}</pre>
+     </article>
+     <article class="nobackground smaller">
+        <h3>the template</h3>
+        <pre style="overflow:scroll">{{ntp.conf.erb}}</pre>
       </article>
       <article>
-        <h3>Tips &amp; Tricks</h3>
-        - puppet apply
-        - 
+        <h3>Modules</h3>
+        Classes, defines, files and templates can (and should!) be packaged up into modules.
+        A module is a simple directory structure under the server's module path.
+        <pre class="noprettyprint">
+/modulepath/modulename/manifests/init.pp
+/modulepath/modulename/files/
+/modulepath/modulename/templates/</pre>
+        puppet automatically searches for modules when including classes or using resource types.
+        <pre> include foo </pre>
+        will include class 'foo' from /modulepath/foo/manifests/init.pp if it hasn't been declared already.
+      </article>
+      <article>
+        <h3>Stuff I've missed</h3>
+        <ul>
+            <li>facter</li>
+            <li>variables</li>
+            <li>conditionals and "flow control"</li>
+            <li>mcollective</li>
+            <li>web management</li>
+        </ul>
       </article>
       <article>
         <h3>Pitfalls &amp; warts</h3>
-        - variable scope
-        - ensure => latest
-        - inter-package dependencies
+        <ul>
+            <li>variable scope can be tricky due to puppet's non-deterministic
+            parsing order</li>
+            <li><code>ensure =&gt; latest</code> can result in unpredictable results unless
+            you manage your own deb/yum repos</li>
+            <li>inter-package dependencies sometimes need to be explicitly
+            defined, even though your package manager can take care of it</li>
+            <li>resource names are global - be careful about how resources are
+            named inside defines() and classes</li>
+        </ul>
       </article>
       <article>
         <h1 align="center">Q &amp; A</h1>

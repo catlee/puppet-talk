@@ -125,7 +125,7 @@ window['PR']
       "retry self super then true undef unless until when yield BEGIN END ";
   var SH_KEYWORDS = FLOW_CONTROL_KEYWORDS + "case done elif esac eval fi " +
       "function in local set then until ";
-  var PUPPET_KEYWORDS = FLOW_CONTROL_KEYWORDS + "enable node include service file running latest source mode notify command creates define";
+  var PUPPET_KEYWORDS = FLOW_CONTROL_KEYWORDS + "enable node include service file running latest source mode notify command creates define content";
   var ALL_KEYWORDS = (
       CPP_KEYWORDS + CSHARP_KEYWORDS + JSCRIPT_KEYWORDS + PERL_KEYWORDS +
       PYTHON_KEYWORDS + RUBY_KEYWORDS + SH_KEYWORDS + PUPPET_KEYWORDS);

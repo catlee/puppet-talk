@@ -12,27 +12,11 @@ class ntp {
     }
     file {
         "/etc/ntp.conf":
-            source => "/vagrant/ntp.conf",
+            content => template("/vagrant/ntp.conf.erb"),
             mode => 644,
             notify => Service["ntp"];
     }
 }
 
-class apache {
-    package {
-        "apache2":
-            ensure => latest;
-    }
-
-    service {
-        "apache2":
-            require => Package["apache2"],
-            enable => true,
-            ensure => running;
-    }
-}
-
-node "lucid32" {
-    include apache
-    include ntp
-}
+$servers = ["ntp.mydomain.com", "ntp2.mydomain.com"]
+include ntp
